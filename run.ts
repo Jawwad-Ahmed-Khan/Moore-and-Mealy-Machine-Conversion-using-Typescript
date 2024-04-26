@@ -103,13 +103,43 @@ console.table(MM);
 
 console.log("Output of My Moore Machine : ",Moore_Machine_Outputs(MM,String(M1.Inputed_string),M1));
 
+Convert_To_Mealy(MM,String(M1.Inputs));
+
 }
 
+function Convert_To_Mealy(Moore_M:Moore_Machine[],Inp:string){
+     let Tem_M:Mealy_Machine[]=[];
+     let Moo:Moore_Machine[]=Moore_M;
+     for(let i=0; i< Moore_M.length;i++)
+      {
+        Tem_M.push(new Mealy_Machine());
+        Tem_M[i].state_Number=i;
+        
+        for(let j=0;j<Moo[i].Transition_on_state.length;j++)
+          {
+            Tem_M[i].Move.push(new Transiton(i,Inp[j],Moo[Moo[i].Transition_on_state[j]].Output_value,Moo[i].Transition_on_state[j]));
+          }
+      } 
+      console.log("------------------------ | Moore Machine Convert to Mealy Machine | -------------------------");
+
+      let Print_T: Transiton[] = [];
+      for (let i = 0; i < Tem_M.length * Inp.length; i++) {
+        Print_T.push(new Transiton());
+      }
+      let temp: number = 0;
+      for (let i = 0; i < Tem_M.length; i++) {
+        for (let j = 0; j < Tem_M[i].Move.length; j++) {
+          Print_T[temp] = Tem_M[i].Move[j];
+          ++temp;
+        }
+      }
+    console.table(Print_T);
+}
 let Take_choice=await inquirer.prompt([{message:"Select choice Which you Have:",type:"list",name:"Machine",choices:["1 : Moore","2: Mealy"]}]);
 
 switch(Take_choice.Machine)
 {
-  case "1: Moore":
+  case "1 : Moore":
     My_Moore();
   break;
   case "2: Mealy":

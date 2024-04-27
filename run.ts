@@ -1,7 +1,9 @@
 import inquirer from "inquirer";
+
 import {Mealy_Machine_Struture,Mealy_Output,Transiton,take_input_for_Mealy,Mealy_Machine} from "./Machine_Modules.js";
 
-import {Moore_Machine_Structute,Moore_Machine,Moore_Machine_Outputs,Taking_Input_For_Moore } from "./Machine_Modules.js";
+import {Moore_Machine_Structute,Moore_Machine,Moore_Machine_Outputs,Taking_Input_For_Moore,Convert_To_Mealy } from "./Machine_Modules.js";
+
 
 async function My_Mealy(){
 let Answer = await inquirer.prompt([
@@ -63,6 +65,8 @@ let Answer = await inquirer.prompt([
   console.table(Print_T);
   
   console.log("Output Of Mealy Machine: ", Mealy_Output(Mymachine, firstMealy));
+
+  Convert_To_Moore(Mymachine,firstMealy);
 }
 
 async function My_Moore() {
@@ -103,38 +107,88 @@ console.table(MM);
 
 console.log("Output of My Moore Machine : ",Moore_Machine_Outputs(MM,String(M1.Inputed_string),M1));
 
-Convert_To_Mealy(MM,String(M1.Inputs));
+Convert_To_Mealy(MM,M1);
 
 }
 
-function Convert_To_Mealy(Moore_M:Moore_Machine[],Inp:string){
-     let Tem_M:Mealy_Machine[]=[];
-     let Moo:Moore_Machine[]=Moore_M;
-     for(let i=0; i< Moore_M.length;i++)
-      {
-        Tem_M.push(new Mealy_Machine());
-        Tem_M[i].state_Number=i;
-        
-        for(let j=0;j<Moo[i].Transition_on_state.length;j++)
-          {
-            Tem_M[i].Move.push(new Transiton(i,Inp[j],Moo[Moo[i].Transition_on_state[j]].Output_value,Moo[i].Transition_on_state[j]));
-          }
-      } 
-      console.log("------------------------ | Moore Machine Convert to Mealy Machine | -------------------------");
+function Convert_To_Moore(Mealy_M:Mealy_Machine[],Struct:Mealy_Machine_Struture)
+{
+let New_Moore:Moore_Machine[]=[];
 
-      let Print_T: Transiton[] = [];
-      for (let i = 0; i < Tem_M.length * Inp.length; i++) {
-        Print_T.push(new Transiton());
-      }
-      let temp: number = 0;
-      for (let i = 0; i < Tem_M.length; i++) {
-        for (let j = 0; j < Tem_M[i].Move.length; j++) {
-          Print_T[temp] = Tem_M[i].Move[j];
-          ++temp;
+for(let i=0;i<Mealy_M.length;i++)
+  {
+    New_Moore.push(new Moore_Machine(i));
+  } //Moore Me Mealy Jitne State Dil diye
+    New_Moore[0].Output_value=Mealy_M[0].Move[0].output;
+  
+  for(let i=0;i<Mealy_M.length;i++)
+    {
+      let vars:number;
+      for(let j=0;j<Mealy_M[0].Move.length;j++)
+        {
+          vars=Mealy_M[i].Move[j].Jump_to_state_Number;
+          if(New_Moore[vars].Output_value===""||New_Moore[vars].Output_value===Mealy_M[i].Move[j].output)
+            {
+              New_Moore[i].Transition_on_state.push(vars);
+              New_Moore[vars].Output_value=Mealy_M[i].Move[j].output;
+            }
+            else
+            {
+              if(i>vars)
+                {
+                  let x:number;
+                  for(x=vars+1;x<New_Moore.length;x++)
+                    {
+                      if(New_Moore[x].State_Number===vars&&New_Moore[x].Output_value===Mealy_M[i].Move[j].output)
+                        break;
+                    }
+                    if(x<New_Moore.length)
+                      New_Moore[i].Transition_on_state.push(x);
+                    else
+                    {
+                      New_Moore[i].Transition_on_state.push(Moore_Machine.length);
+                      New_Moore.push(new Moore_Machine(vars,Mealy_M[i].Move[j].output));
+                    }
+                }else
+                {
+              New_Moore[i].Transition_on_state.push(Moore_Machine.length);
+              New_Moore.push(new Moore_Machine(vars,Mealy_M[i].Move[j].output));
+                }
+            }
+          //   else if(i<=vars)
+          //   {
+              
+          //     New_Moore[i].Transition_on_state.push(Moore_Machine.length);
+          //     New_Moore.push(new Moore_Machine(vars,Mealy_M[i].Move[j].output));
+            
+          // }else {
+          //     const break_array=New_Moore.slice(vars+1);
+          //     const index=break_array.findIndex((obj)=>obj.State_Number===vars&&obj.Output_value===Mealy_M[i].Move[j].output);
+          //     if(index>=0)
+          //       {
+          //         New_Moore[i].Transition_on_state.push(vars+index);
+          //       }else
+          //       {
+          //         New_Moore[i].Transition_on_state.push(Moore_Machine.length);
+          //     New_Moore.push(new Moore_Machine(vars,Mealy_M[i].Move[j].output));
+          //       }
+          //   }
+          
+          }          
+
         }
-      }
-    console.table(Print_T);
-}
+
+        for(let i=0;i<New_Moore.length;i++)
+          {
+            if(New_Moore[i].Transition_on_state.length===0)
+              {
+                New_Moore[i].Transition_on_state=New_Moore[New_Moore[i].State_Number].Transition_on_state;
+                New_Moore[i].State_Number=i; 
+              }
+          }
+          console.table(New_Moore);
+    }
+
 let Take_choice=await inquirer.prompt([{message:"Select choice Which you Have:",type:"list",name:"Machine",choices:["1 : Moore","2: Mealy"]}]);
 
 switch(Take_choice.Machine)

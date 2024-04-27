@@ -103,3 +103,42 @@ export let Taking_Input_For_Moore =async (i:number,j:string)=>{
         {message:`${j} ${i}:`,type:"string",name:"take_input"}]);
     return take_input.take_input;
     }
+
+  export  function Convert_To_Mealy(Moore_M:Moore_Machine[],Struct:Moore_Machine_Structute){
+      let Tem_M:Mealy_Machine[]=[];
+      let Moo:Moore_Machine[]=Moore_M;
+      let Inp=String(Struct.Inputs);
+      const simple:Mealy_Machine_Struture={
+       Number_of_state:Struct.Number_of_state,
+       Inputs: Struct.Inputs,
+       Outputs: Struct.Outputs,
+       Inputed_string: Struct.Inputed_string,
+      }
+ 
+      
+      for(let i=0; i< Moore_M.length;i++)
+       {
+         Tem_M.push(new Mealy_Machine());
+         Tem_M[i].state_Number=i;
+         
+         for(let j=0;j<Moo[i].Transition_on_state.length;j++)
+           {
+             Tem_M[i].Move.push(new Transiton(i,Inp[j],Moo[Moo[i].Transition_on_state[j]].Output_value,Moo[i].Transition_on_state[j]));
+           }
+       } 
+       console.log("\n------------------------ | Moore Machine Convert to Mealy Machine | -------------------------\n");
+ 
+       let Print_T: Transiton[] = [];
+       for (let i = 0; i < Tem_M.length * Inp.length; i++) {
+         Print_T.push(new Transiton());
+       }
+       let temp: number = 0;
+       for (let i = 0; i < Tem_M.length; i++) {
+         for (let j = 0; j < Tem_M[i].Move.length; j++) {
+           Print_T[temp] = Tem_M[i].Move[j];
+           ++temp;
+         }
+       }
+     console.table(Print_T);
+     console.log("\nOutput Of Mealy Machine:",Mealy_Output(Tem_M,simple));
+ }

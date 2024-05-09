@@ -126,6 +126,7 @@ for(let i=0;i<Mealy_M.length;i++)
       let vars:number;
       for(let j=0;j<Mealy_M[0].Move.length;j++)
         {
+          let Yad_state_num:number=New_Moore.length;
           vars=Mealy_M[i].Move[j].Jump_to_state_Number;
           if(New_Moore[vars].Output_value===""||New_Moore[vars].Output_value===Mealy_M[i].Move[j].output)
             {
@@ -134,10 +135,10 @@ for(let i=0;i<Mealy_M.length;i++)
             }
             else
             {
-              if(i>vars)
+              if(i>=vars)
                 {
                   let x:number;
-                  for(x=vars+1;x<New_Moore.length;x++)
+                  for(x=vars;x<New_Moore.length;x++)
                     {
                       if(New_Moore[x].State_Number===vars&&New_Moore[x].Output_value===Mealy_M[i].Move[j].output)
                         break;
@@ -146,12 +147,13 @@ for(let i=0;i<Mealy_M.length;i++)
                       New_Moore[i].Transition_on_state.push(x);
                     else
                     {
-                      New_Moore[i].Transition_on_state.push(Moore_Machine.length);
+                      New_Moore[i].Transition_on_state.push(x);
                       New_Moore.push(new Moore_Machine(vars,Mealy_M[i].Move[j].output));
+                      Yad_state_num=x;
                     }
                 }else
                 {
-              New_Moore[i].Transition_on_state.push(Moore_Machine.length);
+              New_Moore[i].Transition_on_state.push(Yad_state_num);
               New_Moore.push(new Moore_Machine(vars,Mealy_M[i].Move[j].output));
                 }
             }
@@ -186,7 +188,14 @@ for(let i=0;i<Mealy_M.length;i++)
                 New_Moore[i].State_Number=i; 
               }
           }
+          let New_Moore_Struct:Moore_Machine_Structute={
+            Number_of_state: New_Moore.length,
+             Inputs:String(Struct.Inputs),
+             Outputs:String(Struct.Outputs) ,
+             Inputed_string: String(Struct.Inputed_string)
+          };
           console.table(New_Moore);
+          console.log("Output Of Converted Moore Machine :",Moore_Machine_Outputs(New_Moore,New_Moore_Struct.Inputed_string,New_Moore_Struct));
     }
 
 let Take_choice=await inquirer.prompt([{message:"Select choice Which you Have:",type:"list",name:"Machine",choices:["1 : Moore","2: Mealy"]}]);

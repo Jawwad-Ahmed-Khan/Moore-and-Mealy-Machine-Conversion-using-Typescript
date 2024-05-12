@@ -62,9 +62,12 @@ let Answer = await inquirer.prompt([
     }
   }
   console.clear();
+  console.log("\n---------- | Mealy Machine Structure | -----------\n");
+  console.table(firstMealy);
+
   console.table(Print_T);
-  
-  console.log("Output Of Mealy Machine: ", Mealy_Output(Mymachine, firstMealy));
+
+  console.log("\nOutput Of Mealy Machine: ", Mealy_Output(Mymachine, firstMealy));
 
   Convert_To_Moore(Mymachine,firstMealy);
 }
@@ -72,10 +75,10 @@ let Answer = await inquirer.prompt([
 async function My_Moore() {
   
 let abc = await inquirer.prompt([
-  { message: "Please enter a number OF states", type: "number", name: "f1"},
-  {message: "Please enter a Inputs", type: "string", name:"f2"},
-  {message: "Please enter a Outputs", type: "string", name:"f3"},
-  {message: "Please enter a Inputed_string", type: "string", name:"f4"}
+  { message: "Please enter a number OF states:", type: "number", name: "f1"},
+  {message: "Please enter a Inputs:", type: "string", name:"f2"},
+  {message: "Please enter a Outputs:", type: "string", name:"f3"},
+  {message: "Please enter a Inputed_string:", type: "string", name:"f4"}
 ]);
 
 let M1: Moore_Machine_Structute={
@@ -95,7 +98,7 @@ for(let i = 0;i<MM.length;i++)
     {
         // let take_input=await inquirer.prompt([
         //     {message:`output of ${i}:`,type:"string",name:"take_input"}]);
-      MM[i].Output_value=String(await Taking_Input_For_Moore(i,"output of"));
+      MM[i].Output_value=String(await Taking_Input_For_Moore(i,"Enter Output OF State Number "));
       for(let j=0;j<M1.Inputs.length;j++)
         {
                 MM[i].Transition_on_state.push(Number(await Taking_Input_For_Moore(i,"Transion on Input "+M1.Inputs[j]+" for State ")));
@@ -103,10 +106,15 @@ for(let i = 0;i<MM.length;i++)
 
     }
 console.clear();
+console.log("--------- | Moore Machine Structure | ----------\n");
+console.table(M1)
+console.log();
 console.table(MM);
 
 console.log("Output of My Moore Machine : ",Moore_Machine_Outputs(MM,String(M1.Inputed_string),M1));
 
+console.log("\n------------- | Created Mealy Machine Structure And Mealy Machine | -----------\n");
+console.table(M1);
 Convert_To_Mealy(MM,M1);
 
 }
@@ -194,6 +202,8 @@ for(let i=0;i<Mealy_M.length;i++)
              Outputs:String(Struct.Outputs) ,
              Inputed_string: String(Struct.Inputed_string)
           };
+          console.log("\n-------  | Moore Machine Structure | ------------\n");
+          console.table(New_Moore_Struct);
           console.table(New_Moore);
           console.log("Output Of Converted Moore Machine :",Moore_Machine_Outputs(New_Moore,New_Moore_Struct.Inputed_string,New_Moore_Struct));
     }

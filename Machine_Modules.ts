@@ -126,7 +126,7 @@ export let Taking_Input_For_Moore =async (i:number,j:string)=>{
              Tem_M[i].Move.push(new Transiton(i,Inp[j],Moo[Moo[i].Transition_on_state[j]].Output_value,Moo[i].Transition_on_state[j]));
            }
        } 
-       console.log("\n------------------------ | Moore Machine Convert to Mealy Machine | -------------------------\n");
+      //  console.log("\n------------------------ | Moore Machine Convert to Mealy Machine | -------------------------\n");
  
        let Print_T: Transiton[] = [];
        for (let i = 0; i < Tem_M.length * Inp.length; i++) {
